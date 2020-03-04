@@ -1,6 +1,7 @@
 import xlrd
 import sys
 import numpy
+import matplotlib.pyplot as plt
 from typing import Tuple, List
 INDEX_DATES: int = 1
 INDEX_WEATHER_DEFAULT: int = 11
@@ -13,8 +14,7 @@ def main():
     weather_values = input[1]
     hospitalizations = input[2]
     peaks = get_peaks(weather_values)
-    print(str(dates) + "\n\n" + str(weather_values) +
-          "\n\n" + str(hospitalizations))
+    draw_graph(hospitalizations, peaks)
 
 
 def get_input() -> list:
@@ -64,6 +64,15 @@ def get_peaks(data: list) -> list:
         else:
             result.append(0)    # No peak
     return result
+
+
+def draw_graph(hospitalizations, peaks):
+    plt.plot(hospitalizations)
+    plt.plot(peaks)
+
+    plt.title("Title")
+    plt.legend()
+    plt.show()
 
 
 main()
