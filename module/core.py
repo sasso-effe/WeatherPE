@@ -2,32 +2,40 @@ import xlrd
 import sys
 import numpy
 from typing import Tuple, List
+INDEX_DATES: int = 1
+INDEX_WEATHER_DEFAULT: int = 11
+INDEX_HOSPITALIZATIONS: int = 13
 
 
 def main():
     input = get_input()
     dates = input[0]
-    pressure = input[1]
+    weather_values = input[1]
     hospitalizations = input[2]
-    peaks = get_peaks(pressure)
+    peaks = get_peaks(weather_values)
+    print(str(dates) + "\n\n" + str(weather_values) +
+          "\n\n" + str(hospitalizations))
 
 
 def get_input() -> list:
     result: list = [[], [], []]
-    input_loc = get_input_loc()
+    input_loc, INDEX_WEATHER = get_argv()
     sheet = open_sheet(input_loc)
-    for i in range(sheet.nrows):
-        for j in range(len(result)):
-            result[j].append(sheet.cell(i, j).value)
+    for i in range(1, sheet.nrows):
+        result[0].append(sheet.cell(i, INDEX_DATES).value)
+        result[1].append(sheet.cell(i, INDEX_WEATHER).value)
+        result[2].append(sheet.cell(i, INDEX_HOSPITALIZATIONS).value)
     return result
 
 
-def get_input_loc() -> str:
-    if len(sys.argv) != 2:
+def get_argv() -> Tuple[str, int]:
+    if len(sys.argv) < 2 or len(sys.argv) > 3:
         print("Invalid number of arguements")
         sys.exit()
     else:
-        return str(sys.argv[1])
+        weather_col_index = int(sys.argv[2]) if len(
+            sys.argv) == 3 else INDEX_WEATHER_DEFAULT
+        return str(sys.argv[1]), weather_col_index
 
 
 def open_sheet(location: str) -> xlrd.sheet.Sheet:
