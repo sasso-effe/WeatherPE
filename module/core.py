@@ -6,6 +6,7 @@ from typing import Tuple, List
 INDEX_DATES: int = 1
 INDEX_WEATHER_DEFAULT: int = 11
 INDEX_HOSPITALIZATIONS: int = 13
+STD_MULT_FACTOR: float = 1.0
 
 
 def main():
@@ -57,9 +58,9 @@ def get_peaks(data: list) -> list:
     result: list = []
     means, stds = get_mobile_mean_and_std(data)
     for i in range(len(means)):
-        if data[i] < means[i] - stds[i]:
+        if data[i] < means[i] - STD_MULT_FACTOR * stds[i]:
             result.append(-1)   # Negative peak
-        elif data[i] > means[i] + stds[i]:
+        elif data[i] > means[i] + STD_MULT_FACTOR * stds[i]:
             result.append(1)    # Positive peak
         else:
             result.append(0)    # No peak
