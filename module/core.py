@@ -7,6 +7,7 @@ INDEX_DATES: int = 1
 INDEX_WEATHER_DEFAULT: int = 11
 INDEX_HOSPITALIZATIONS: int = 13
 STD_MULT_FACTOR: float = 1.0
+LEN_MOVING_WINDOW: int = 7
 
 
 def main():
@@ -45,10 +46,9 @@ def open_sheet(location: str) -> xlrd.sheet.Sheet:
 
 
 def get_mobile_mean_and_std(data: list) -> Tuple[List, List]:
-    WINDOW = 7
     mobile_mean: list = []
     mobile_std: list = []
-    for i in range(len(data) - WINDOW):
+    for i in range(len(data) - LEN_MOVING_WINDOW):
         mobile_mean.append(numpy.mean(data[i: i + WINDOW]))
         mobile_std.append(abs(numpy.std(data[i: i + WINDOW])))
     return mobile_mean, mobile_std
