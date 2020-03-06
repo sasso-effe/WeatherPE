@@ -3,6 +3,7 @@ import sys
 import numpy
 import matplotlib.pyplot as plt
 from typing import Tuple, List
+from peak_maker import PeakMaker
 INDEX_DATES: int = 1
 INDEX_WEATHER_DEFAULT: int = 11
 INDEX_HOSPITALIZATIONS: int = 13
@@ -12,11 +13,11 @@ LEN_MOVING_WINDOW: int = 7
 
 def main():
     input = get_input()
-    dates = input[0]
-    weather_values = input[1]
-    hospitalizations = input[2]
-    peaks = get_peaks(weather_values)
-    draw_graph(hospitalizations, peaks)
+    dates: List[str] = input[0]
+    weather_values: List[float] = input[1]
+    hospitalizations: List[int] = input[2]
+    dataset = PeakMaker(dates, weather_values, hospitalizations)
+    draw_graph(dataset.hospitalizations, dataset.get_peaks())
 
 
 def get_input() -> list:
@@ -43,29 +44,6 @@ def get_argv() -> Tuple[str, int]:
 def open_sheet(location: str) -> xlrd.sheet.Sheet:
     workbook = xlrd.open_workbook(location)
     return workbook.sheet_by_index(0)
-
-
-def get_mobile_mean_and_std(data: list) -> Tuple[List, List]:
-    mobile_mean: list = []
-    mobile_std: list = []
-    for i in range(len(data) - LEN_MOVING_WINDOW):
-        mobile_mean.append(numpy.mean(data[i: i + LEN_MOVING_WINDOW]))
-        mobile_std.append(abs(numpy.std(data[i: i + LEN_MOVING_WINDOW])))
-    return mobile_mean, mobile_std
-
-
-def get_peaks(data: list) -> list:
-    result: list = [0] * 7      # Initial shift of 7 positions
-    means, stds = get_mobile_mean_and_std(data)
-    for i in range(len(means)):
-        j = i + LEN_MOVING_WINDOW - 1
-        if data[i] < means[i] - STD_MULT_FACTOR * stds[i]:
-            result.append(-1)   # Negative peak
-        elif data[i] > means[i] + STD_MULT_FACTOR * stds[i]:
-            result.append(1)    # Positive peak
-        else:
-            result.append(0)    # No peak
-    return result
 
 
 def draw_graph(hospitalizations, peaks):
