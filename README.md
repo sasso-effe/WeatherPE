@@ -4,8 +4,13 @@ A study about correlation between Pulmonary Emboly hospitaliations and weather c
 ## How To Run
 
 ```
-python module/core.py XLSX_FILE_LOCATION [COLUMN_INDEX]
+python -m weape/correlation.py XLSX_FILE_LOCATION
+```
+```
+python -m weape/auto_correlation.py XLSX_FILE_LOCATION
 ```
 
-Where COLUMN_INDEX is the index of the data column whose peaks will be identified. If omitted, default value will be used (11).
+Dates must stay on column 1 (B).
+Weather values must stay on column 11 (L).
 Hospitalizations number must stay on column 13 (N).
+The first row must contains columns' labels
