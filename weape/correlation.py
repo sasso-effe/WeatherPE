@@ -1,6 +1,5 @@
-from typing import List
 import matplotlib.pyplot as plt
-from weape.data import Data
+from weape.data import TRAINING_SET
 from weape.series import Series
 
 
@@ -18,7 +17,7 @@ class Correlation:
 
 
 def correlation_main():
-    data = Data()
+    data = TRAINING_SET
     correlation = Correlation(data.weather, data.hospitalizations)
     correlation.draw()
 

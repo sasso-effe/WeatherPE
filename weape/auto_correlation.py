@@ -1,24 +1,10 @@
-from statsmodels.tsa.stattools import acf
-import matplotlib.pyplot as plt
-from weape.data import Data
-from weape.series import Series
-
-
-class AutoCorrelation:
-
-    def __init__(self, series: Series):
-        self.series = series
-
-    def draw(self):
-        plt.acorr(self.series.values)
-        plt.title("Correlogram of " + self.series.label)
-        plt.show()
+from weape.data import TRAINING_SET
 
 
 def auto_correlation_main():
-    data = Data()
-    ac = AutoCorrelation(data.weather)
-    ac.draw()
+    data = TRAINING_SET
+    data.weather = data.weather.normalize()
+    data.weather.draw_correlogram()
 
 
 auto_correlation_main()
