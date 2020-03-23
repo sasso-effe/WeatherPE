@@ -6,12 +6,13 @@ from weape.correlation import Correlation
 from weape.data import Data
 from weape.argv import XLSX_PATH
 import xlrd
-
-# Number of column in the xlsx file
 from weape.peak_maker import PeakMaker
 
+# Number of column in the xlsx file DO NOT MODIFY
 COLUMNS = 14
-TESTING_SET_LENGTH = 366  # 2016 has 366 days
+
+# 2016 has 366 days
+TESTING_SET_LENGTH = 366
 
 # Max number of past days to consider during the calculus of variation series
 MAX_VARIATION_LENGTH = 3
@@ -19,7 +20,7 @@ MAX_VARIATION_LENGTH = 3
 # Max delay of peaks' influence on hospitalizations to consider
 MAX_PEAK_DELAY = 3
 
-# List of indexes
+# List of indexes DO NOT MODIFY
 (
     I_PLACE,  # 0
     I_DATES,  # 1
@@ -39,6 +40,11 @@ MAX_PEAK_DELAY = 3
 
 # Values to consider
 working_index = [I_TEMP_AVG, I_TEMP_MIN, I_TEMP_MAX, I_WIND_AVG, I_WIND_MAX, I_PRESSURE]
+
+
+########################################################################################################################
+# DO NOT MODIFY BELOW
+########################################################################################################################
 
 
 def __init_working_set() -> list:

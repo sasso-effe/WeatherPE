@@ -1,6 +1,7 @@
 import sys
 from weape.data import Data
 import xlrd
+import os.path
 
 
 def __get_argv() -> str:
@@ -8,7 +9,8 @@ def __get_argv() -> str:
         print("Invalid number of arguments")
         sys.exit()
     elif len(sys.argv) == 1:
-        return "..\\res\\data.xlsx"
+        full_path = os.path.abspath('./res/data.xlsx')
+        return full_path
     else:
         return str(sys.argv[1])
 
