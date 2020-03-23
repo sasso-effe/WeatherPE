@@ -81,10 +81,11 @@ def __check_peak_series(data: Data, spearman_max: list, pearson_max: list):
 
 def __print_results(spearman_max, pearson_max):
     print(
-        """Correlation with max Pearson: {}
-        Pearson: {} Spearman: {}
-        Correlation with max Spearman: {}
-        Pearson: {} Spearman: {}
+        """
+Correlation with max Pearson: {}
+    Pearson: {} Spearman: {}
+Correlation with max Spearman: {}
+    Pearson: {} Spearman: {}
         """.format(pearson_max[1].x.label, pearson_max[1].pearson_coefficient(), pearson_max[1].spearman_coefficient(),
                    spearman_max[1].x.label, spearman_max[1].pearson_coefficient(),
                    spearman_max[1].spearman_coefficient())

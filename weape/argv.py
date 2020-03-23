@@ -4,9 +4,11 @@ import xlrd
 
 
 def __get_argv() -> str:
-    if len(sys.argv) < 2 or len(sys.argv) > 3:
+    if len(sys.argv) > 3:
         print("Invalid number of arguments")
         sys.exit()
+    elif len(sys.argv) == 1:
+        return "..\\res\\data.xlsx"
     else:
         return str(sys.argv[1])
 
