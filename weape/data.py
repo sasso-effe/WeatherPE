@@ -1,29 +1,21 @@
-import xlrd
+from typing import Tuple
 
-from weape.argv import XLSX_PATH
 from weape.series import Series
-
-
-def _get_data_from_xlsx(index_dates, index_weather, index_hospitalizations):
-    result: list = [[], [], []]
-    sheet = _open_sheet(XLSX_PATH)
-    for i in range(0, sheet.nrows):
-        result[0].append(sheet.cell(i, index_dates).value)
-        result[1].append(sheet.cell(i, index_weather).value)
-        result[2].append(sheet.cell(i, index_hospitalizations).value)
-    return Data(result[0], result[1], result[2])
-
-
-def _open_sheet(location: str) -> xlrd.sheet.Sheet:
-    workbook = xlrd.open_workbook(location)
-    return workbook.sheet_by_index(0)
+from weape.correlation import Correlation
 
 
 class Data:
     def __init__(self, dates: list, weather: list, hospitalizations: list):
-        self.dates = Series(dates)
-        self.weather = Series(weather)
-        self.hospitalizations = Series(hospitalizations)
+        self.dates: Series = Series(dates)
+        self.weather: Series = Series(weather)
+        self.hospitalizations: Series = Series(hospitalizations)
+
+    def pop(self) -> Tuple[str, bool, int]:
+        """
+        pop from each series
+        :return: (date, weather, hospitalizations)
+        """
+        return self.dates.pop(), self.weather.pop(), self.hospitalizations.pop()
 
     def split_training_test(self, training_len: int) -> tuple:
         """
@@ -46,6 +38,5 @@ class Data:
         second_part.insert(0, series.label)
         return second_part
 
-
-TRAINING_SET, TEST_SET = _get_data_from_xlsx(1, 11, 13).split_training_test(366)
-pass
+    def correlation(self) -> Correlation:
+        return Correlation(self.weather, self.hospitalizations)

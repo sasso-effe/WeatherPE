@@ -3,31 +3,32 @@ import sys
 import numpy
 import matplotlib.pyplot as plt
 from typing import Tuple, List
+from weape.series import Series
 
 
 class PeakMaker:
-    def __init__(self, dates: List[str], weather_values: List[float], hospitalizations: List[int],
-                 len_moving_window: int = 7, std_mult_factor: float = 1.0):
-        self.dates = dates
-        self.weather_values = weather_values
-        self.hospitalizations = hospitalizations
+    def __init__(self, series, len_moving_window=7, std_mult_factor=1.0):
+        self.series = series
         self.len_moving_window = len_moving_window
         self.std_mult_factor = std_mult_factor
 
-    def get_peaks(self) -> list:
+    def get_peaks(self) -> Series:
+        values: list = self.series.values
         result: list = [0] * (self.len_moving_window - 1)  # Initial shift equal to window length
-        means, stds = self._get_mobile_mean_and_std(self.weather_values)
+        label = "Peaks of {} (w={} f={})".format(self.series.label, self.len_moving_window,
+                                                         self.std_mult_factor)
+        means, stds = self._get_mobile_mean_and_std(values)
         for i in range(len(means)):
             j = i + self.len_moving_window - 1
-            if self.weather_values[j] < means[i] - self.std_mult_factor * stds[i]:
+            if values[j] < means[i] - self.std_mult_factor * stds[i]:
                 result.append(-1)  # Negative peak
-            elif self.weather_values[j] > means[i] + self.std_mult_factor * stds[i]:
+            elif values[j] > means[i] + self.std_mult_factor * stds[i]:
                 result.append(1)  # Positive peak
             else:
                 result.append(0)  # No peak
-        return result
+        return Series(result, label)
 
-    def _get_mobile_mean_and_std(self, data: list) -> Tuple[List, List]:
+    def _get_mobile_mean_and_std(self, data: list):
         mobile_mean: list = []
         mobile_std: list = []
         for i in range(len(data) - self.len_moving_window + 1):
