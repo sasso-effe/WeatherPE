@@ -44,8 +44,5 @@ class TestCorrelation(unittest.TestCase):
         self.assertEqual(shifted_by_2.y.label, "y shifted by 2")
 
 
-
-
-
 if __name__ == '__main__':
     unittest.main()

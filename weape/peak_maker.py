@@ -16,7 +16,7 @@ class PeakMaker:
         values: list = self.series.values
         result: list = [0] * (self.len_moving_window - 1)  # Initial shift equal to window length
         label = "Peaks of {} (w={} f={})".format(self.series.label, self.len_moving_window,
-                                                         self.std_mult_factor)
+                                                 self.std_mult_factor)
         means, stds = self._get_mobile_mean_and_std(values)
         for i in range(len(means)):
             j = i + self.len_moving_window - 1

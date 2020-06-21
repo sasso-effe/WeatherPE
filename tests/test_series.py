@@ -38,6 +38,10 @@ class TestSeries(unittest.TestCase):
         self.assertEqual(series[-1], 9)
         self.assertEqual(series[-4], 6)
 
+    def test_len(self):
+        series = Series([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "test")
+        self.assertEqual(len(series), 10)
+
     def test_pop(self):
         series = Series([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "test")
         self.assertEqual(9, series.pop())
@@ -52,6 +56,20 @@ class TestSeries(unittest.TestCase):
         self.assertEqual(series.variation_series(3, True).values, [12, 13, 14, 9, 4])
         self.assertEqual(series.variation_series(3, True).label, "Variation of test in 3 days (unsigned)")
 
+    def test_mobile_mean(self):
+        series = Series([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "test")
+        window1 = series.mobile_mean(1)
+        window2 = series.mobile_mean(2)
+        window3 = series.mobile_mean(3)
+        window10 = series.mobile_mean(10)
+        expected1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        expected2 = [0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5]
+        expected3 = [1, 2, 3, 4, 5, 6, 7, 8]
+        expected10 = [4.5]
+        for (series, expected) in zip([window1, window2, window3, window10],
+                                      [expected1, expected2, expected3, expected10]):
+            for (v, w) in zip(series.values, expected):
+                self.assertAlmostEqual(v, w)
 
 
 if __name__ == '__main__':

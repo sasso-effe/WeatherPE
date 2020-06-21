@@ -1,8 +1,7 @@
 import matplotlib.pyplot as plt
-# from weape.data import TRAINING_SET
 from weape.series import Series
 from scipy.stats import spearmanr, pearsonr
-from numpy import cov, ndarray
+from numpy import cov, ndarray, mean
 
 
 class Correlation:
@@ -10,24 +9,76 @@ class Correlation:
         self.x = x
         self.y = y
 
-    def __getitem__(self, index):
-        return self.x[index], self.y[index]
+    def __getitem__(self, item):
+        if isinstance(item, slice):
+            return Correlation(self.x[item.start:item.stop:item.step], self.y[item.start:item.stop:item.step])
+        else:
+            return self.x[item], self.y[item]
 
-    def draw(self):
+    def scatter(self):
         plt.scatter(self.x.values, self.y.values)
         plt.xlabel(self.x.label)
         plt.ylabel(self.y.label)
         plt.title("Correlation")
         plt.show()
 
-    def spearman_coefficient(self) -> float:
-        return spearmanr(self.x.values, self.y.values)[0]
+    def plot(self):
+        plt.plot(self.x.values, label=self.x.label)
+        plt.plot(self.y.values, label=self.y.label)
+        plt.xlabel("Time (days)")
+        plt.legend()
+        plt.show()
+
+    def draw_means(self, _max: int = None, xlabel: str = None, ylabel: str = None, hlabel: str = None):
+        if _max is None:
+            _max = int(max(self.x))
+            max_label = str(_max)
+        else:
+            max_label = str(_max) + "+"
+        sum_length = [[0, 0]]
+        for i in range(_max):
+            sum_length.append([0, 0])
+        for i in range(len(self.x)):
+            _x = int(self.x[i])
+            _x = _max if _x >= _max else _x
+            _y = self.y[i]
+            sum_length[_x][0] += _y
+            sum_length[_x][1] += 1
+        means = []
+        for s, l in sum_length:
+            means.append(s / l)
+        for i in range(len(means)):
+            plt.plot(i, means[i], 'bo', markersize=int(sum_length[i][1] / len(self.x) * 100))
+        plt.plot(means, 'b')
+        xlabel = self.x.label if xlabel is None else xlabel
+        ylabel = self.y.label if ylabel is None else ylabel
+        hlabel = "Mean of {}".format(ylabel) if hlabel is None else hlabel
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
+        xticks = []
+        for i in range(_max):
+            xticks.append(str(i))
+        xticks.append(max_label)
+        plt.xticks(range(_max + 1), xticks)
+        _mean = float(mean(self.y.values))
+        ymax = means[_max]
+        plt.hlines(_mean, 0, _max, linestyles="dashed",
+                   label=hlabel)
+        plt.annotate(str(round(_mean, 3)), xy=(_max - 0.5, _mean * 1.0005), xycoords='data')
+        plt.vlines(_max, _mean, ymax, linestyles="dashed", colors="r",
+                   label="Distance = {} (+{}%)".format(str(round(ymax - _mean, 3)),
+                                                       str(round((ymax - _mean) / _mean * 100, 2))))
+        plt.legend()
+        plt.show()
+
+    def spearman_coefficient(self) -> tuple:
+        return spearmanr(self.x.values, self.y.values)
 
     def cov(self) -> ndarray:
         return cov(self.x.values, self.y.values)
 
-    def pearson_coefficient(self) -> float:
-        return pearsonr(self.x.values, self.y.values)[0]
+    def pearson_coefficient(self) -> tuple:
+        return pearsonr(self.x.values, self.y.values)
 
     def shift(self, length=1):
         """
@@ -41,18 +92,8 @@ class Correlation:
             new_y.label += " shifted by {}".format(length)
         return Correlation(new_x, new_y)
 
+    def normalize(self, feature_range=(0, 1)):
+        self.x = self.x.normalize(feature_range)
+        self.y = self.y.normalize(feature_range)
+        return self
 
-def correlation_main():
-    data = TRAINING_SET
-    delta_pressure = ["PRESSURE MSL VARIATION (mbar)"]
-    for i in range(1, len(data.weather.values)):
-        delta_pressure.append((data.weather.values[i] - data.weather.values[i - 1]))
-    delta_pressure = Series(delta_pressure)
-    del data.hospitalizations.values[0]
-    correlation = Correlation(delta_pressure, data.hospitalizations)
-    correlation.draw()
-    print("Spearman's coefficient: " + str(correlation.spearman_coefficient()) + "\n"
-          + "Pearson's coefficient: " + str(correlation.pearson_coefficient()) + "\n"
-          + "Covariance: " + str(correlation.cov()) + "\n")
-
-# correlation_main()
