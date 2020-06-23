@@ -5,7 +5,7 @@ weape package contains a framework to be used to represent and analyse historica
 Data in lamma.txt are provided by:
 
 Consorzio LAMMA.
-Laboratorio di Monitoraggio e Modellistica Ambientale per lo sviluppo sostenibile
+Laboratorio di Monitoraggio e Modellistica Ambientale per lo sviluppo sostenibile - 
 Laboratory for Meteorology and Environmental Modelling
 
 Any copy or use of the data must always quote the source of the data in full.
